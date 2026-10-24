@@ -1,0 +1,6 @@
+{
+  "name": "Evolvy",
+  "description": "Evolvy — Train • Evolve • Repeat. Industrial Athleticism strength training, recovery tracker, active workout logger, and AI modular routine generator.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
