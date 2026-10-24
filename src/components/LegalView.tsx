@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ArrowLeft, Shield, FileText, UserX, HelpCircle, Mail, ExternalLink, Trash2, CheckCircle2, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Shield, FileText, UserX, HelpCircle, Mail, ExternalLink, Trash2, CheckCircle2, AlertTriangle, Phone, MapPin, User, Clock, ShieldCheck } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 import { auth, db } from "../firebase";
 import { deleteUser } from "firebase/auth";
@@ -584,6 +584,87 @@ export const LegalView: React.FC<LegalViewProps> = ({
                     {es ? "Gestión de recibos y reembolsos" : "Receipts & refund assistance"}
                   </span>
                 </a>
+              </div>
+            </section>
+
+            {/* INFORMACIÓN LEGAL DEL DESARROLLADOR / TRADER - GOOGLE PLAY & DSA */}
+            <section className="bg-[#12161a] border border-white/10 rounded-2xl p-5 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/5 pb-3">
+                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                  <ShieldCheck className="w-5 h-5 text-[#00a2ff]" />
+                  {es ? "Información Legal del Desarrollador (Comerciante DSA)" : "Developer Legal Information (EU DSA Trader)"}
+                </h2>
+                <span className="text-[11px] font-mono text-[#8e8e93] px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 w-fit">
+                  {es ? "Verificado Google Play & DSA" : "Verified Google Play & DSA"}
+                </span>
+              </div>
+
+              <p className="text-xs text-[#cbd5e1] leading-relaxed">
+                {es
+                  ? "En cumplimiento con la Ley de Servicios Digitales de la Unión Europea (DSA) y las directrices de transparencia para comerciantes de Google Play Store y Apple App Store:"
+                  : "In accordance with European Union Digital Services Act (DSA) requirements and trader transparency rules on Google Play Store and Apple App Store:"}
+              </p>
+
+              <div className="grid sm:grid-cols-2 gap-3 pt-1">
+                {/* Titular */}
+                <div className="bg-[#0a0a0a] p-4 rounded-xl border border-white/5 flex flex-col gap-1">
+                  <span className="text-[11px] font-bold text-[#8e8e93] flex items-center gap-1.5 uppercase tracking-wider">
+                    <User className="w-3.5 h-3.5 text-[#00a2ff]" />
+                    {es ? "Titular / Desarrollador" : "Developer / Legal Entity"}
+                  </span>
+                  <span className="text-sm font-semibold text-white">Pablo Guillermo Morales</span>
+                  <span className="text-[11px] text-[#8e8e93]">
+                    {es ? "Desarrollador y titular de Evolvy" : "Owner & Lead Developer of Evolvy"}
+                  </span>
+                </div>
+
+                {/* Teléfono */}
+                <a
+                  href="tel:+34627050812"
+                  className="bg-[#0a0a0a] p-4 rounded-xl border border-white/5 hover:border-[#d7ff00]/40 transition-all flex flex-col gap-1 group"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-[#8e8e93] flex items-center gap-1.5 uppercase tracking-wider">
+                      <Phone className="w-3.5 h-3.5 text-[#d7ff00]" />
+                      {es ? "Teléfono de Contacto" : "Contact Phone"}
+                    </span>
+                    <ExternalLink className="w-3 h-3 text-[#8e8e93] opacity-50 group-hover:opacity-100 group-hover:text-[#d7ff00]" />
+                  </div>
+                  <span className="text-sm font-mono font-semibold text-white group-hover:text-[#d7ff00] transition-colors">
+                    +34 627 05 08 12
+                  </span>
+                  <span className="text-[11px] text-[#8e8e93]">
+                    {es ? "Llamadas y atención vía WhatsApp" : "Voice calls & WhatsApp assistance"}
+                  </span>
+                </a>
+
+                {/* Dirección Física */}
+                <div className="bg-[#0a0a0a] p-4 rounded-xl border border-white/5 flex flex-col gap-1 sm:col-span-2">
+                  <span className="text-[11px] font-bold text-[#8e8e93] flex items-center gap-1.5 uppercase tracking-wider">
+                    <MapPin className="w-3.5 h-3.5 text-[#ff453a]" />
+                    {es ? "Domicilio Postal / Dirección Física" : "Registered Postal Address"}
+                  </span>
+                  <span className="text-sm font-medium text-white leading-relaxed">
+                    Calle Ponce de León 3, Apt. 1C, 47600 Villalón de Campos, Valladolid, España
+                  </span>
+                  <span className="text-[11px] text-[#8e8e93]">
+                    {es ? "España / Unión Europea" : "Spain / European Union"}
+                  </span>
+                </div>
+
+                {/* Horario de Atención */}
+                <div className="bg-[#0a0a0a] p-4 rounded-xl border border-white/5 flex flex-col gap-1 sm:col-span-2">
+                  <span className="text-[11px] font-bold text-[#8e8e93] flex items-center gap-1.5 uppercase tracking-wider">
+                    <Clock className="w-3.5 h-3.5 text-[#30d158]" />
+                    {es ? "Horario de Atención al Público" : "Public Support Hours"}
+                  </span>
+                  <span className="text-sm font-medium text-white">
+                    {es ? "Lunes a Viernes: 09:00 a 16:00 (Hora Central Europea / Madrid - CET)" : "Monday to Friday: 09:00 - 16:00 (Central European Time / CET)"}
+                  </span>
+                  <span className="text-[11px] text-[#8e8e93]">
+                    {es ? "Soporte continuado 24/7 mediante correo electrónico (respuesta en < 24h)" : "24/7 email ticketing system (typical response in < 24h)"}
+                  </span>
+                </div>
               </div>
             </section>
 
