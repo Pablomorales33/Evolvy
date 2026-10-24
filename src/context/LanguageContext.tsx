@@ -13,6 +13,15 @@ const LanguageContext = createContext<LanguageContextProps | undefined>(undefine
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(() => {
+    // 0. Check query parameter override (?lang=en or ?lang=es)
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const urlLang = params.get("lang");
+      if (urlLang === "en" || urlLang === "es") {
+        localStorage.setItem("evolvy_lang", urlLang);
+        return urlLang;
+      }
+    }
     // 1. Check local storage preference
     const storedLang = localStorage.getItem("evolvy_lang") || localStorage.getItem("irontrack_lang");
     if (storedLang === "es" || storedLang === "en") {
