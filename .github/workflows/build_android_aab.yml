@@ -1,0 +1,103 @@
+name: Build Signed Android App Bundle (.aab)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'android/**'
+      - 'public/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'capacitor.config.ts'
+      - '.github/workflows/build_android_aab.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-aab:
+    name: Build & Sign Production AAB
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: ☕ Setup Java 17 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: 🟢 Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 📦 Install Node Dependencies
+        run: npm ci
+
+      - name: 🔨 Build Production Web Assets
+        run: npm run build
+
+      - name: 📱 Sync Capacitor Android Project
+        run: npx cap sync android
+
+      - name: 🔑 Configure Release Keystore
+        id: setup-keystore
+        run: |
+          mkdir -p android/app
+          if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
+            echo "Using keystore from GitHub Secret..."
+            echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/evolvy-release.jks
+          else
+            echo "Generating persistent production release keystore..."
+            keytool -genkeypair -v \
+              -keystore android/app/evolvy-release.jks \
+              -alias "${{ secrets.KEY_ALIAS || 'evolvy' }}" \
+              -keyalg RSA \
+              -keysize 2048 \
+              -validity 10000 \
+              -storepass "${{ secrets.KEYSTORE_PASSWORD || 'EvolvyPro2026!' }}" \
+              -keypass "${{ secrets.KEY_PASSWORD || 'EvolvyPro2026!' }}" \
+              -dname "CN=Pablo Morales, OU=Evolvy, O=Evolvy, L=Villalon de Campos, ST=Valladolid, C=ES"
+          fi
+
+      - name: 🚀 Build Signed Android App Bundle (AAB)
+        env:
+          KEYSTORE_PATH: "evolvy-release.jks"
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD || 'EvolvyPro2026!' }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS || 'evolvy' }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD || 'EvolvyPro2026!' }}
+        run: |
+          cd android
+          chmod +x ./gradlew
+          ./gradlew bundleRelease --stacktrace
+
+      - name: 📋 Prepare Output Assets
+        run: |
+          mkdir -p build_output
+          cp android/app/build/outputs/bundle/release/app-release.aab build_output/Evolvy-v1.0-release.aab
+          cp android/app/evolvy-release.jks build_output/evolvy-release-upload.jks
+          ls -la build_output/
+
+      - name: 📤 Upload Production AAB Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Evolvy-GooglePlay-Bundle-AAB
+          path: build_output/Evolvy-v1.0-release.aab
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: 🔐 Upload Keystore Backup (Keep Private)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Evolvy-Release-Keystore-Backup
+          path: build_output/evolvy-release-upload.jks
+          if-no-files-found: error
+          retention-days: 30
