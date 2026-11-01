@@ -106,9 +106,16 @@ jobs:
       - name: 📋 Prepare Output Assets
         run: |
           mkdir -p build_output
-          cp android/app/build/outputs/bundle/release/app-release.aab build_output/Evolvy-v1.0-release.aab
+          echo "Locating built AAB files..."
+          find android/app/build/outputs/ -type f || true
+          AAB_FILE=$(find android/app/build/outputs/ -type f -name "*.aab" | head -n 1)
+          echo "Found AAB: $AAB_FILE"
+          if [ -z "$AAB_FILE" ]; then
+            echo "ERROR: No AAB file found!" && exit 1
+          fi
+          cp "$AAB_FILE" build_output/Evolvy-v1.0-release.aab
           cp android/app/evolvy-release.jks build_output/evolvy-release-upload.jks
-          ls -la build_output/
+          ls -lh build_output/
 
       - name: 📤 Upload Production AAB Artifact
         uses: actions/upload-artifact@v4
