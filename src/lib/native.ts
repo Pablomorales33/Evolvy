@@ -1,4 +1,5 @@
 import { Capacitor } from "@capacitor/core";
+import { App as CapApp } from "@capacitor/app";
 import { Haptics, ImpactStyle, NotificationType } from "@capacitor/haptics";
 import { StatusBar, Style } from "@capacitor/status-bar";
 
@@ -59,4 +60,24 @@ export async function initNativeShell() {
   } catch (e) {
     console.warn("StatusBar init failed", e);
   }
+}
+
+/** Escucha el botón físico o gesto de retroceso en Android (Google Play Navigation Guidelines) */
+export function onAndroidBackButton(handler: () => boolean | void) {
+  if (!isNative || platform !== "android") return () => {};
+  let listenerHandle: any = null;
+  CapApp.addListener("backButton", ({ canGoBack }) => {
+    const handled = handler();
+    if (!handled && !canGoBack) {
+      CapApp.exitApp();
+    }
+  }).then((h) => {
+    listenerHandle = h;
+  });
+
+  return () => {
+    if (listenerHandle) {
+      listenerHandle.remove();
+    }
+  };
 }

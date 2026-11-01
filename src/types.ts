@@ -129,11 +129,14 @@ export interface PersonalRecord {
 }
 
 export interface OnboardingPreferences {
-  goal: "hypertrophy" | "strength" | "athletic";
+  goal: "hypertrophy" | "strength" | "athletic" | "longevity";
   daysPerWeek: number;
   experienceLevel: "Beginner" | "Intermediate" | "Advanced" | "Elite";
+  equipment?: "commercial_gym" | "home_dumbbells" | "bodyweight";
+  priorityFocus?: "chest_arms" | "back_shoulders" | "legs_glutes" | "full_body";
   teamName: string;
   coachName: string;
+  wantsProTrial?: boolean;
 }
 
 export interface UserProfile {

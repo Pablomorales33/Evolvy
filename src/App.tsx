@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { TopAppBar } from "./components/TopAppBar";
 import { BottomNavBar, TabId } from "./components/BottomNavBar";
-import { initNativeShell, haptic } from "./lib/native";
+import { initNativeShell, haptic, onAndroidBackButton } from "./lib/native";
 import { identifyUser, purchasePlan, restorePurchases } from "./lib/billing";
 import { DashboardView } from "./components/DashboardView";
 import { WorkoutsView } from "./components/WorkoutsView";
@@ -167,8 +167,35 @@ export default function App() {
   }>({
     totalVolume: 0,
     elapsedSeconds: 0,
-    setsCompleted: 0,
   });
+
+  // Escuchar el botón físico/gesto de "Atrás" de Android para cerrar modales o volver a home
+  useEffect(() => {
+    const unbind = onAndroidBackButton(() => {
+      if (isProModalOpen) {
+        setIsProModalOpen(false);
+        return true;
+      }
+      if (activeLegalDoc) {
+        handleCloseLegal();
+        return true;
+      }
+      if (isSummaryModalOpen) {
+        setIsSummaryModalOpen(false);
+        return true;
+      }
+      if (screen === "recovery" || screen === "player") {
+        setScreen("home");
+        return true;
+      }
+      if (screen !== "home") {
+        setScreen("home");
+        return true;
+      }
+      return false; // Permite que el sistema minimice la app
+    });
+    return unbind;
+  }, [isProModalOpen, activeLegalDoc, isSummaryModalOpen, screen]);
 
   // Observe Firebase Auth state
   useEffect(() => {
@@ -437,7 +464,7 @@ export default function App() {
     }
     try {
       const res = await purchasePlan(planType, currentUser.uid);
-      if (res.mode === "native") {
+      if (res.mode === "google_play" || res.mode === "apple_store") {
         if (res.success && res.isPro) {
           setUserProfile((prev) => ({ ...prev, isPro: true }));
           setIsProModalOpen(false);
@@ -475,7 +502,12 @@ export default function App() {
   }
 
   if (showWelcome) {
-    return <WelcomeStoriesView onComplete={handleCompleteOnboarding} />;
+    return (
+      <WelcomeStoriesView
+        onComplete={handleCompleteOnboarding}
+        onRequestProUpgrade={handleUpgradeToPro}
+      />
+    );
   }
 
   const isPlayer = screen === "player";

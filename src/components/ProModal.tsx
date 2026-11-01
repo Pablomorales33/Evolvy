@@ -199,6 +199,31 @@ export const ProModal: React.FC<ProModalProps> = ({
           </div>
         </div>
 
+        {/* 3-Step Transparent Trial Timeline */}
+        <div className="bg-[#12161a] border border-white/5 rounded-2xl p-3.5 mb-5 space-y-2">
+          <div className="text-[11px] font-bold uppercase tracking-wider text-[#d7ff00] flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-[14px]">timeline</span>
+            {es ? "Cómo funciona tu prueba de 7 días" : "How your 7-day trial works"}
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-center pt-1">
+            <div className="flex flex-col items-center p-2 rounded-xl bg-white/[0.03]">
+              <span className="text-[10px] font-mono text-[#8e8e93] uppercase font-bold">{es ? "Hoy" : "Today"}</span>
+              <span className="text-xs font-black text-white mt-0.5">$0.00</span>
+              <span className="text-[9px] text-[#a1a1a6] mt-0.5 leading-tight">{es ? "Desbloqueo Total" : "Full Access"}</span>
+            </div>
+            <div className="flex flex-col items-center p-2 rounded-xl bg-white/[0.03]">
+              <span className="text-[10px] font-mono text-[#8e8e93] uppercase font-bold">{es ? "Día 5" : "Day 5"}</span>
+              <span className="text-xs font-bold text-[#d7ff00] mt-0.5">{es ? "Aviso" : "Reminder"}</span>
+              <span className="text-[9px] text-[#a1a1a6] mt-0.5 leading-tight">{es ? "Te recordamos" : "Trial Ending"}</span>
+            </div>
+            <div className="flex flex-col items-center p-2 rounded-xl bg-white/[0.03]">
+              <span className="text-[10px] font-mono text-[#8e8e93] uppercase font-bold">{es ? "Día 7" : "Day 7"}</span>
+              <span className="text-xs font-bold text-white mt-0.5">{selectedPlan === "annual" ? "$39.99" : "$6.99"}</span>
+              <span className="text-[9px] text-[#a1a1a6] mt-0.5 leading-tight">{es ? "Primer cobro" : "First charge"}</span>
+            </div>
+          </div>
+        </div>
+
         {/* Pricing CTA Button */}
         <div className="flex flex-col gap-2.5">
           <button
@@ -219,33 +244,31 @@ export const ProModal: React.FC<ProModalProps> = ({
           <p className="text-center text-[11px] text-[#8e8e93] font-['Inter'] leading-relaxed">
             {selectedPlan === "annual"
               ? (es
-                  ? "7 días gratis, luego $39.99 al año ($3.33/mes). Cancela en cualquier momento sin penalizaciones."
-                  : "7 days free, then $39.99/year ($3.33/mo). Cancel anytime.")
+                  ? "Prueba de 7 días gratis. Tras la prueba, $39.99 al año ($3.33/mes). Cancela cuando quieras en Google Play."
+                  : "7-day free trial. Then $39.99/year ($3.33/mo). Cancel anytime in Google Play Subscriptions.")
               : (es
-                  ? "$6.99 facturado mes a mes. Cancela en cualquier momento."
-                  : "$6.99 billed month-to-month. Cancel anytime.")}
+                  ? "$6.99 facturado mes a mes. Cancela en cualquier momento en Google Play."
+                  : "$6.99 billed month-to-month. Cancel anytime in Google Play Subscriptions.")}
           </p>
 
-          {/* Native Store Notice / Security Badge */}
-          <div className="flex items-center justify-center gap-1.5 text-[11px] text-[#8e8e93]">
-            <span className="material-symbols-outlined text-[14px] text-[#d7ff00]">lock</span>
-            <span>
-              {isNative
-                ? platform === "android"
-                  ? (es ? "Facturado de forma segura a través de Google Play" : "Billed securely via Google Play")
-                  : (es ? "Facturado de forma segura a través de Apple StoreKit" : "Billed securely via Apple App Store")
-                : (es ? "Conexión cifrada de extremo a extremo" : "End-to-end encrypted checkout")}
+          {/* Native Store Notice / Google Play & Google Pay Official Badge */}
+          <div className="flex items-center justify-center gap-2 py-1.5 px-3 rounded-full bg-white/[0.04] border border-white/5 text-[11px] text-[#cbd5e1] mx-auto w-fit">
+            <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3.609 1.814L13.793 12 3.61 22.186c-.198-.198-.31-.47-.31-.762V2.576c0-.292.112-.564.31-.762zM15.207 13.414l2.486 2.485-11.895 6.81 9.409-9.295zm0-2.828l-9.41-9.295 11.895 6.81-2.485 2.485zm1.414 1.414l3.18-1.819a1.08 1.08 0 010 1.874l-3.18 1.819v-1.874z" fill="#00a2ff"/>
+            </svg>
+            <span className="font-medium">
+              {es ? "Facturado a través de Google Play & Google Pay" : "Billed securely via Google Play & Google Pay"}
             </span>
           </div>
 
-          {/* Legal Compliance & Restore Purchases (Apple Guideline 3.1.1 & 3.1.2) */}
+          {/* Legal Compliance & Restore Purchases (Google Play & App Store required) */}
           <div className="flex flex-wrap justify-center items-center gap-x-3 gap-y-1 text-[11px] text-[#8e8e93] pt-1">
             <button
               type="button"
               onClick={() => onOpenLegal?.("terms")}
               className="underline hover:text-white transition-colors"
             >
-              {es ? "Términos de Uso (EULA)" : "Terms of Use (EULA)"}
+              {es ? "Términos de Suscripción" : "Subscription Terms"}
             </button>
             <span>•</span>
             <button
@@ -253,7 +276,7 @@ export const ProModal: React.FC<ProModalProps> = ({
               onClick={() => onOpenLegal?.("privacy")}
               className="underline hover:text-white transition-colors"
             >
-              {es ? "Política de Privacidad" : "Privacy Policy"}
+              {es ? "Privacidad" : "Privacy Policy"}
             </button>
             {onRestorePurchases && (
               <>
