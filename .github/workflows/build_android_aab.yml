@@ -81,15 +81,16 @@ jobs:
 
       - name: 🚀 Build Signed Android App Bundle (AAB)
         env:
-          KEYSTORE_PATH: "evolvy-release.jks"
+          KEYSTORE_PATH: "${{ github.workspace }}/android/app/evolvy-release.jks"
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD || 'EvolvyPro2026!' }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS || 'evolvy' }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD || 'EvolvyPro2026!' }}
         run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || true
           cd android
           sed -i 's/\r$//' gradlew
           chmod +x gradlew
-          ./gradlew bundleRelease --stacktrace
+          ./gradlew bundleRelease --stacktrace --no-daemon
 
       - name: 📋 Prepare Output Assets
         run: |
