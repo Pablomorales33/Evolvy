@@ -17,6 +17,10 @@ on:
 permissions:
   contents: write
 
+env:
+  ANDROID_HOME: /usr/local/lib/android/sdk
+  ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+
 jobs:
   build-aab:
     name: Build & Sign Production AAB
@@ -45,10 +49,12 @@ jobs:
       - name: 🔨 Build Production Web Assets
         run: npm run build
 
-      - name: 📱 Prepare Android & Sync Capacitor
+      - name: 📱 Prepare Android & Copy Web Assets
         run: |
+          echo "sdk.dir=/usr/local/lib/android/sdk" > android/local.properties
+          sed -i 's/\r$//' android/gradlew
           chmod +x android/gradlew
-          npx cap sync android
+          npx cap copy android
 
       - name: 🔑 Configure Release Keystore
         id: setup-keystore
@@ -78,7 +84,8 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD || 'EvolvyPro2026!' }}
         run: |
           cd android
-          chmod +x ./gradlew
+          sed -i 's/\r$//' gradlew
+          chmod +x gradlew
           ./gradlew bundleRelease --stacktrace
 
       - name: 📋 Prepare Output Assets
