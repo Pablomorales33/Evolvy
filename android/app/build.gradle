@@ -16,13 +16,18 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
     signingConfigs {
         release {
-            if (System.getenv("KEYSTORE_PATH")) {
-                storeFile file(System.getenv("KEYSTORE_PATH"))
-                storePassword System.getenv("KEYSTORE_PASSWORD")
-                keyAlias System.getenv("KEY_ALIAS") ?: "evolvy"
-                keyPassword System.getenv("KEY_PASSWORD") ?: System.getenv("KEYSTORE_PASSWORD")
+            def ksPath = System.getenv("KEYSTORE_PATH")
+            if (ksPath && file(ksPath).exists()) {
+                storeFile file(ksPath)
+                storePassword(System.getenv("KEYSTORE_PASSWORD") ?: "EvolvyPro2026!")
+                keyAlias(System.getenv("KEY_ALIAS") ?: "evolvy")
+                keyPassword(System.getenv("KEY_PASSWORD") ?: System.getenv("KEYSTORE_PASSWORD") ?: "EvolvyPro2026!")
             }
         }
     }
@@ -30,7 +35,8 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            if (System.getenv("KEYSTORE_PATH")) {
+            def ksPath = System.getenv("KEYSTORE_PATH")
+            if (ksPath && file(ksPath).exists()) {
                 signingConfig signingConfigs.release
             }
         }

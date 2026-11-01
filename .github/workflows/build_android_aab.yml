@@ -30,11 +30,11 @@ jobs:
       - name: 📥 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: ☕ Setup Java 17 (Temurin)
+      - name: ☕ Setup Java 21 (Temurin)
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
           cache: 'gradle'
 
       - name: 🟢 Setup Node.js 20
@@ -70,21 +70,22 @@ jobs:
             echo "Generating persistent production release keystore..."
             keytool -genkeypair -v \
               -keystore android/app/evolvy-release.jks \
-              -alias "${{ secrets.KEY_ALIAS || 'evolvy' }}" \
+              -alias "evolvy" \
               -keyalg RSA \
               -keysize 2048 \
               -validity 10000 \
-              -storepass "${{ secrets.KEYSTORE_PASSWORD || 'EvolvyPro2026!' }}" \
-              -keypass "${{ secrets.KEY_PASSWORD || 'EvolvyPro2026!' }}" \
+              -storepass "EvolvyPro2026!" \
+              -keypass "EvolvyPro2026!" \
               -dname "CN=Pablo Morales, OU=Evolvy, O=Evolvy, L=Villalon de Campos, ST=Valladolid, C=ES"
           fi
+          ls -lh android/app/evolvy-release.jks
 
       - name: 🚀 Build Signed Android App Bundle (AAB)
         env:
           KEYSTORE_PATH: "${{ github.workspace }}/android/app/evolvy-release.jks"
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD || 'EvolvyPro2026!' }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS || 'evolvy' }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD || 'EvolvyPro2026!' }}
+          KEYSTORE_PASSWORD: "EvolvyPro2026!"
+          KEY_ALIAS: "evolvy"
+          KEY_PASSWORD: "EvolvyPro2026!"
         run: |
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || true
           cd android
