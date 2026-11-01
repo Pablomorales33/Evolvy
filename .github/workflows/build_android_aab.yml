@@ -91,7 +91,17 @@ jobs:
           cd android
           sed -i 's/\r$//' gradlew
           chmod +x gradlew
-          ./gradlew bundleRelease --stacktrace --no-daemon
+          ./gradlew bundleRelease --stacktrace --no-daemon 2>&1 | tee ../gradle_build.log
+
+      - name: 📝 Capture Error on Failure
+        if: failure()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          tail -n 120 gradle_build.log > build_error.txt || true
+          git add build_error.txt
+          git commit -m "ci: capture build error details" || true
+          git push origin main || true
 
       - name: 📋 Prepare Output Assets
         run: |
