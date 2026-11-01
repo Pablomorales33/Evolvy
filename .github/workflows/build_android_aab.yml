@@ -45,8 +45,10 @@ jobs:
       - name: 🔨 Build Production Web Assets
         run: npm run build
 
-      - name: 📱 Sync Capacitor Android Project
-        run: npx cap sync android
+      - name: 📱 Prepare Android & Sync Capacitor
+        run: |
+          chmod +x android/gradlew
+          npx cap sync android
 
       - name: 🔑 Configure Release Keystore
         id: setup-keystore
